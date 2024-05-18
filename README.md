@@ -1,4 +1,4 @@
-### news-content-classification
+# news-content-classification
 This project classifies news contents into the following topics
 1. Entertainment 
 2. Business
