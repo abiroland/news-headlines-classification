@@ -35,6 +35,22 @@ def fultrn(preds):
     data = pad_sequences(sequences, maxlen=maxlen)
     return data
 
+
+def targetnames(result):
+    if result == 0:
+        return "Business"
+    elif result == 1:
+        return "Education"
+    elif result == 2:
+        return "Entertainment"
+    elif result == 3:
+        return "Sports"
+    elif result == 4:
+        return "Technology"
+    else:
+        return "unknown"
+
+
 ## load the model
 nlpmodel=load_model('model.keras')
 
@@ -46,12 +62,9 @@ def home():
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
     data=request.json['data']
-    print(data)
-    print(np.array(list(data.values())))
-    new_data= fultrn(np.array(list(data.values())))
+    new_data=np.array(fultrn(data))
     output=np.argmax(nlpmodel.predict(new_data), axis=1)
-    print(np.array(classnames)[output])
-    return jsonify(np.array(classnames)[output])
+    return jsonify(targetnames(output))
 
 if __name__ == '__main__':
     app.run(debug=True)
