@@ -1,25 +1,18 @@
-import pickle
+import tf_keras
 import keras
 import tensorflow as tf
 from keras.models import load_model
-import pickle_utils
 import json
 from flask import Flask, request, app, jsonify, url_for, render_template
 import numpy as np
 import pandas as pd
 
-# Class names
-classnames = {
-    0 : 'Business',
-    1 : 'Education',
-    2 : 'Entertainment',
-    3 : 'Sports',
-    4 : 'Technology'
-}
+
 
 app=Flask(__name__)
 # process data
 def fultrn(preds):
+
     from tf_keras.preprocessing.text import Tokenizer
     from keras.preprocessing.sequence import pad_sequences
 
@@ -45,10 +38,10 @@ def targetnames(result):
         return "Entertainment"
     elif result == 3:
         return "Sports"
-    elif result == 4:
+    elif result == 3:
         return "Technology"
     else:
-        return "unknown"
+        return "Unknown"
 
 
 ## load the model
@@ -62,7 +55,7 @@ def home():
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
     data=request.json['data']
-    new_data=np.array(fultrn(data))
+    new_data=np.array(fultrn(data.values()))
     output=np.argmax(nlpmodel.predict(new_data), axis=1)
     return jsonify(targetnames(output))
 
