@@ -59,6 +59,13 @@ def predict_app():
     output=np.argmax(nlpmodel.predict(new_data), axis=1)
     return jsonify(targetnames(output))
 
+@app.route('/predict', methods=['POST'])
+def predict():
+    data=request.form['data']
+    new_data=np.array(fultrn(data.values()))
+    output=np.argmax(nlpmodel.predict(new_data), axis=1)
+    return render_template('home.html', prediction = targetnames(output))
+
 if __name__ == '__main__':
     app.run(debug=True)
 
