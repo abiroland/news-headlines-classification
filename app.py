@@ -22,16 +22,16 @@ tfidf_vectorizer = pickle.load(open('transformer_model.pkl', 'rb'))
 ## load the model
 nlpmodel=pickle.load(open('ovr_model.pkl', 'rb'))
 
-def targetnames(result):
-    if result == 0:
+def targetname(x):
+    if x == 0:
         return "Business"
-    elif result == 1:
+    elif x == 1:
         return "Education"
-    elif result == 2:
+    elif x == 2:
         return "Entertainment"
-    elif result == 3:
-        return "Sports"
-    elif result == 3:
+    elif x == 3:
+        return "Sport"
+    elif x == 4:
         return "Technology"
     else:
         return "Unknown"
@@ -44,20 +44,16 @@ def home():
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
     data=request.json['data']
-    data = [data]
-    new_data= tfidf_vectorizer.transform(data) 
+    new_data= tfidf_vectorizer.transform(data.values()) 
     output=nlpmodel.predict(new_data)
-    return jsonify(targetnames(output))
+    return jsonify(targetname(output))
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if 'data' not in request.form:
-        return jsonify({'error': 'Missing data field'}), 400
     data=request.form['data']
-    data = [data]
-    new_data=tfidf_vectorizer.transform(data)
+    new_data=tfidf_vectorizer.transform(data.values())
     output=nlpmodel.predict(new_data)
-    return render_template('home.html', prediction = targetnames(output))
+    return render_template('home.html', prediction = {targetname(output)})
 
 if __name__ == '__main__':
     app.run(debug=True)
