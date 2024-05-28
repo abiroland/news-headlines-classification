@@ -2,6 +2,7 @@ Flask
 matplotlib
 pandas
 numpy
-sklearn
+scikit-learn
 keras
 tensorflow
+gunicorn
