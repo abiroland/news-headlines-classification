@@ -14,6 +14,8 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+import gzip
+import shutil
 
 
 # process data
@@ -49,9 +51,16 @@ def unlist(list):
 from sklearn.feature_extraction.text import TfidfVectorizer
 tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
 
+compressed_file_path = 'model.pkl.gz'
+decompressed_file_path = 'model.pkl'
 
-## load the model
-nlpmodel=pickle.load(open('model.pkl','rb'))
+with gzip.open(compressed_file_path, 'rb') as f_in:
+    with open(decompressed_file_path, 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+
+# Load the model
+with open(decompressed_file_path, 'rb') as f:
+    nlpmodel = pickle.load(f)
 
 
 app=Flask(__name__)
