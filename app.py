@@ -16,6 +16,8 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 
+app=Flask(__name__)
+
 # process data
 
 # defining function that contains punctuation removal
@@ -51,9 +53,6 @@ tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
 
 # Load the model
 nlpmodel = pickle.load(open('model.pkl','rb'))
-
-
-app=Flask(__name__)
 
 @app.route('/')
 def home():
