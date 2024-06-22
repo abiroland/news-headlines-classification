@@ -13,7 +13,6 @@ string.punctuation
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 
 
 app=Flask(__name__)
