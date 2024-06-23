@@ -2,4 +2,3 @@ brown
 punkt
 stopwords
 wordnet
-word_tokenize
