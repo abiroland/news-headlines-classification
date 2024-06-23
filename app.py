@@ -13,6 +13,9 @@ string.punctuation
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 
+
+app=Flask(__name__)
+
 # process data
 
 # defining function that contains punctuation removal
@@ -51,7 +54,6 @@ nlpmodel = pickle.load(open('model.pkl','rb'))
 
 
 
-app=Flask(__name__)
 
 @app.route('/')
 def home():
