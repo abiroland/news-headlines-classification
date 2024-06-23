@@ -14,8 +14,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 
 
-app=Flask(__name__)
-
 # process data
 
 # defining function that contains punctuation removal
@@ -52,8 +50,8 @@ tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
 # Load the model
 nlpmodel = pickle.load(open('model.pkl','rb'))
 
-
-
+# Flask app
+app=Flask(__name__)
 
 @app.route('/')
 def home():
