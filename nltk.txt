@@ -3,4 +3,3 @@ punkt
 stopwords
 wordnet
 word_tokenize
-WordNetLemmatizer
