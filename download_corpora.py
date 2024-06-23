@@ -4,7 +4,7 @@ import nltk
 corpora = [
     'brown',
     'punkt',
-    'stopwords'
+    'stopwords',
     'wordnet'
 ]
 
