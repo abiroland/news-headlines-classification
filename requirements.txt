@@ -1,7 +1,7 @@
-Flask
 matplotlib
 pandas
 numpy
 scikit-learn
-gunicorn
 nltk
+Flask>=3.0.3
+gunicorn>=22.0.0
