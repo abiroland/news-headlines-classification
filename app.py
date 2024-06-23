@@ -53,22 +53,20 @@ nlpmodel = pickle.load(open('model.pkl','rb'))
 # Flask app
 app=Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template('home.html')
+#@app.route('/')
+#def home():
+#    return render_template('home.html')
 
-@app.route('/predict_api', methods=['POST'])
-def predict_app():
-    data=request.json['data']
-    punt_removed=remove_punctuation(list(data))
-    convt_lower=punt_removed.lower()
-    tokenized=tokenize(convt_lower)
-    stop_removed=remove_stopwords(tokenized)
-    lemmatized=lemmatizing(stop_removed)
-    unlisted=unlist(lemmatized)
-    new_data= tfidf_vectorizer.transform([unlisted]) 
-    output=nlpmodel.predict(new_data)
-    return jsonify(output[0].tolist())      
+#@app.route('/predict_api', methods=['POST'])
+#def predict_app():
+#    punt_removed=remove_punctuation(list(data))
+ #   tokenized=tokenize(convt_lower)
+  #  stop_removed=remove_stopwords(tokenized)
+   # lemmatized=lemmatizing(stop_removed)
+    #unlisted=unlist(lemmatized)
+    #new_data= tfidf_vectorizer.transform([unlisted]) 
+    #output=nlpmodel.predict(new_data)
+    #return jsonify(output[0].tolist())      
 
 @app.route('/predict', methods=['POST'])
 def predict():
