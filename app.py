@@ -53,6 +53,11 @@ nlpmodel = pickle.load(open('model.pkl','rb'))
 # Flask app
 app=Flask(__name__)
 
+tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
+
+# Load the model
+nlpmodel = pickle.load(open('model.pkl','rb'))
+
 @app.route('/')
 def home():
     return render_template('home.html')
