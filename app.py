@@ -47,6 +47,21 @@ def unlist(list):
 from sklearn.feature_extraction.text import TfidfVectorizer
 tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
 
+
+def target(data):
+    if data == 0:
+        return "Business"
+    elif data == 1:
+        return "Education"
+    elif data == 2:
+        return "Entertainment"
+    elif data == 3:
+        return "Sports"
+    elif data == 4:
+        return "Technology"
+    else:
+        return "Unknown"
+
 # Load the model
 nlpmodel = pickle.load(open('model.pkl','rb'))
 
@@ -73,7 +88,7 @@ def predict_app():
     unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform([unlisted]) 
     output=nlpmodel.predict(new_data)
-    return jsonify(output[0].tolist())      
+    return jsonify(target(output[0]))      
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -86,7 +101,7 @@ def predict():
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
     output=nlpmodel.predict(new_data)
-    return render_template('home.html', prediction = output[0].tolist())
+    return render_template('home.html', prediction = target(output[0]))
 
 if __name__ == '__main__':
     app.run(debug=True)
