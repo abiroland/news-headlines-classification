@@ -3,7 +3,6 @@ import json
 from flask import Flask, request, app, jsonify, url_for, render_template
 import numpy as np
 import pandas as pd
-import joblib
 import string
 import pickle
 import nltk
@@ -63,11 +62,10 @@ def target(data):
         return "Unknown"
 
 # Load the model
-nlpmodel = pickle.load(open('model.pkl','rb'))
 
 # Flask app
 app=Flask(__name__)
-
+# Load the transformer
 tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
 
 # Load the model
@@ -80,7 +78,7 @@ def home():
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
     data=request.json['data']
-    punt_removed=remove_punctuation(data)  
+    punt_removed=remove_punctuation(list(data.values())[0])  
     convt_lower=punt_removed.lower()
     tokenized=tokenize(convt_lower)
     stop_removed=remove_stopwords(tokenized)
@@ -101,7 +99,7 @@ def predict():
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
     output=nlpmodel.predict(new_data)
-    return render_template('home.html', inpd = data, prediction = target(output[0]))
+    return render_template('home.html', prediction = target(output[0].tolist()))
 
 if __name__ == '__main__':
     app.run(debug=True)
