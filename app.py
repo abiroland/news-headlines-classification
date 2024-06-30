@@ -80,15 +80,15 @@ def home():
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
     data=request.json['data']
-    punt_removed=remove_punctuation(list(data))
+    punt_removed=remove_punctuation(data)  
     convt_lower=punt_removed.lower()
     tokenized=tokenize(convt_lower)
     stop_removed=remove_stopwords(tokenized)
     lemmatized=lemmatizing(stop_removed)
-    unlisted=unlist(lemmatized)
-    new_data= tfidf_vectorizer.transform([unlisted]) 
+    #unlisted=unlist(lemmatized)
+    new_data= tfidf_vectorizer.transform(lemmatized) 
     output=nlpmodel.predict(new_data)
-    return jsonify(target(output[0]))      
+    return jsonify(target(output[0].tolist()))      
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -101,7 +101,7 @@ def predict():
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
     output=nlpmodel.predict(new_data)
-    return render_template('home.html', prediction = target(output[0]))
+    return render_template('home.html', inpd = data, prediction = target(output[0]))
 
 if __name__ == '__main__':
     app.run(debug=True)
