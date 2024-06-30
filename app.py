@@ -67,9 +67,8 @@ def target(data):
 app=Flask(__name__)
 # Load the transformer
 tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
-
 # Load the model
-nlpmodel = pickle.load(open('model.pkl','rb'))
+model = pickle.load(open('model.pkl','rb'))
 
 @app.route('/')
 def home():
@@ -85,20 +84,20 @@ def predict_app():
     lemmatized=lemmatizing(stop_removed)
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
-    output=nlpmodel.predict(new_data)
+    output=model.predict(new_data)
     return jsonify(target(output[0].tolist()))      
 
 @app.route('/predict', methods=['POST'])
 def predict():
     data=request.form['data']
-    punt_removed=remove_punctuation(data)  
+    punt_removed=remove_punctuation(list(data.values())[0])  
     convt_lower=punt_removed.lower()
     tokenized=tokenize(convt_lower)
     stop_removed=remove_stopwords(tokenized)
     lemmatized=lemmatizing(stop_removed)
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
-    output=nlpmodel.predict(new_data)
+    output=model.predict(new_data)
     return render_template('home.html', prediction = target(output[0].tolist()))
 
 if __name__ == '__main__':
