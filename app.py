@@ -90,7 +90,7 @@ def predict_app():
 @app.route('/predict', methods=['POST'])
 def predict():
     data=request.form['data']
-    punt_removed=remove_punctuation(list(data.values())[0])  
+    punt_removed=remove_punctuation(data)  
     convt_lower=punt_removed.lower()
     tokenized=tokenize(convt_lower)
     stop_removed=remove_stopwords(tokenized)
