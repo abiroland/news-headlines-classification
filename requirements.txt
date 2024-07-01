@@ -1,7 +1,7 @@
-matplotlib
+Flask
+gunicorn
 pandas
 numpy
 scikit-learn
 nltk
-Flask
-gunicorn
+
