@@ -11,6 +11,9 @@ from nltk.tokenize import word_tokenize
 string.punctuation
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
+from sklearn.feature_extraction.text import TfidfVectorizer
+from xgboost import XGBClassifier
+
 
 
 # process data
@@ -42,8 +45,6 @@ def lemmatizing(tokenized_text):
 
 def unlist(list):
     return " ".join(list)
-
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 def target(data):
     if data == 0:
