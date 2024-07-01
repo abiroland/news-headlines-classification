@@ -68,9 +68,25 @@ tfidf_vectorizer = joblib.load('transformer_model.joblib')
 # Load the model
 model = joblib.load('xgbmodel.joblib')
 
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data=request.form.values()
+    punt_removed=remove_punctuation(data)  
+    convt_lower=punt_removed.lower()
+    tokenized=tokenize(convt_lower)
+    stop_removed=remove_stopwords(tokenized)
+    lemmatized=lemmatizing(stop_removed)
+    #unlisted=unlist(lemmatized)
+    new_data= tfidf_vectorizer.transform(lemmatized) 
+    output=model.predict(new_data)
+    return render_template("home.html", prediction = target(output[0]))
+
 
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
@@ -85,18 +101,6 @@ def predict_app():
     output=model.predict(new_data)
     return jsonify(target(output[0].tolist()))      
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data=request.form.values()
-    punt_removed=remove_punctuation(data)  
-    convt_lower=punt_removed.lower()
-    tokenized=tokenize(convt_lower)
-    stop_removed=remove_stopwords(tokenized)
-    lemmatized=lemmatizing(stop_removed)
-    #unlisted=unlist(lemmatized)
-    new_data= tfidf_vectorizer.transform(lemmatized) 
-    output=model.predict(new_data)
-    return render_template("home.html", prediction = target(output[0]))
 
 if __name__ == '__main__':
     app.run(debug=True)
