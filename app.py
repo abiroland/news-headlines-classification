@@ -98,7 +98,7 @@ def predict():
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
     output=model.predict(new_data)
-    return render_template('home.html', prediction = target(output[0].tolist()))
+    return render_template('home.html', prediction = target(output[0]))
 
 if __name__ == '__main__':
     app.run(debug=True)
