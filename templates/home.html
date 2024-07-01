@@ -1,69 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
             margin: 0;
         }
-        .container {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .login {
             text-align: center;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .output {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 4px;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>News headline suggestion</h1>
+    <div class="login">
+        <h1>News Headline Suggestion</h1>
         <p>This app suggests the topic that closely matches the article/news headline.</p>
         <br>
-        <form action="{{ url_for('predict')}}" method='post'>
-            <input type="text" name="data" required="required" placeholder="Enter headline...">
+        <form action="{{ url_for('predict') }}" method="post">
+            <input type="text" size="100%" name="data" required="required" placeholder="Enter headline...">
             <br>
             <button type="submit" class="btn button-primary btn-block btn-large">Predict</button><br>
         </form>
-
-    <div class="output">
-        {% if prediction %}
-            <h2>{{ prediction }}</h2>
-        {% endif %}
-    
-
-
+        <h3>{{ prediction }}</h3>
+    </div>
 </body>
+
 </html>
