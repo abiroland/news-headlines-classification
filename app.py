@@ -4,7 +4,7 @@ from flask import Flask, request, app, jsonify, url_for, render_template
 import numpy as np
 import pandas as pd
 import string
-import pickle
+import joblib
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -44,8 +44,6 @@ def unlist(list):
     return " ".join(list)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
-
 
 def target(data):
     if data == 0:
@@ -66,9 +64,9 @@ def target(data):
 # Flask app
 app=Flask(__name__)
 # Load the transformer
-tfidf_vectorizer = pickle.load(open('transformer_model.pkl','rb'))
+tfidf_vectorizer = joblib.load('transformer_model.joblib')
 # Load the model
-model = pickle.load(open('model.pkl','rb'))
+model = joblib.load('xgbmodel.joblib')
 
 @app.route('/')
 def home():
@@ -98,7 +96,7 @@ def predict():
     #unlisted=unlist(lemmatized)
     new_data= tfidf_vectorizer.transform(lemmatized) 
     output=model.predict(new_data)
-    return render_template('home.html', prediction = target(output[0]))
+    return render_template("home.html", prediction = target(output[0]))
 
 if __name__ == '__main__':
     app.run(debug=True)
