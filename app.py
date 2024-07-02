@@ -12,7 +12,13 @@ string.punctuation
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from sklearn.feature_extraction.text import TfidfVectorizer
-from xgboost import XGBClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import VotingClassifier
+from sklearn.svm import SVC
 
 
 
