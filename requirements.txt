@@ -1,8 +1,8 @@
-Flask==3.0.1
-gunicorn==22.0.0
-pandas==2.2.0rc0
+Flask
+gunicorn
+pandas
 numpy
-scikit-learn==1.4.0
+scikit-learn
 bertopic
 openai
 umap
