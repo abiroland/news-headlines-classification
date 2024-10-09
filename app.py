@@ -55,7 +55,7 @@ vectorizer_model = CountVectorizer(stop_words="english", ngram_range=(1, 1))
 
 # Define the models
 representation_model = OpenAI(client, model="gpt-3.5-turbo", chat=True)
-bertmodel = BERTopic.load("topic_model.safetensors")
+bertmodel = BERTopic.load("topic_model")
 
 
 @app.route('/')
@@ -68,8 +68,9 @@ def predict():
     data=request.form.values()
     punt_removed=remove_punctuation(data)  
     convt_lower=punt_removed.lower()
-    output=bertmodel.transform(convt_lower)
-    return render_template("home.html", prediction = target(output[0]))
+    topics, probs = bertmodel.transform(convt_lower)
+    for topic, prob in enumerate(zip(topics, probs)):
+        return render_template("home.html", prediction = target(topic))
 
 
 @app.route('/predict_api', methods=['POST'])
@@ -77,8 +78,9 @@ def predict_app():
     data=request.json['data']
     punt_removed=remove_punctuation(list(data.values())[0])  
     convt_lower=punt_removed.lower()
-    output=bertmodel.transform(convt_lower)
-    return jsonify(target(output[0].tolist()))      
+    topics, probs = bertmodel.transform(convt_lower)
+    for topic, prob in enumerate(zip(topics, probs)):
+        return jsonify(target(topic).tolist())      
 
 
 if __name__ == '__main__':
