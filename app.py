@@ -9,71 +9,53 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 string.punctuation
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import VotingClassifier
-from sklearn.svm import SVC
-
-
+import safetensors
+import openai
+from bertopic import BERTopic
+from bertopic.representation import OpenAI
+from sklearn.feature_extraction.text import CountVectorizer
+from hdbscan import HDBSCAN
+from umap import UMAP
+import os
+from dotenv import load_dotenv
 
 # process data
-
 # defining function that contains punctuation removal
 def remove_punctuation(text):
     no_punct = "".join([c for c in text if c not in string.punctuation])
     return no_punct
 
-# defining function that contains tokenization
-import re
-def tokenize(text):
-    tokens = re.split('\W+', text)
-    return tokens
-
-# defining function that contains stopwords removal
-nltk.download('stopwords')
-stopwords = nltk.corpus.stopwords.words('english')
-def remove_stopwords(tokenized_list):
-    text = [word for word in tokenized_list if word not in stopwords]
-    return text
-
-# defining function that contains lemmitization
-nltk.download('wordnet')
-wn = nltk.WordNetLemmatizer()
-def lemmatizing(tokenized_text):
-    text = [wn.lemmatize(word) for word in tokenized_text]
-    return text
-
-def unlist(list):
-    return " ".join(list)
+# Topic Output
 
 def target(data):
     if data == 0:
-        return "Business"
+        return "Entertainment"
     elif data == 1:
         return "Education"
     elif data == 2:
-        return "Entertainment"
-    elif data == 3:
-        return "Sports"
-    elif data == 4:
         return "Technology"
+    elif data == 3:
+        return "Business"
+    elif data == 4:
+        return "Sports"
     else:
         return "Unknown"
 
-# Load the model
 
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+
+
+# Load the model
 # Flask app
 app=Flask(__name__)
-# Load the transformer
-tfidf_vectorizer = joblib.load('transformer_model.joblib')
 # Load the model
-model = joblib.load('xgbmodel.joblib')
+client = openai.OpenAI(api_key=api_key)
+vectorizer_model = CountVectorizer(stop_words="english", ngram_range=(1, 1))
+
+# Define the models
+representation_model = OpenAI(client, model="gpt-3.5-turbo", chat=True)
+bertmodel = BERTopic.load("topic_model.safetensors")
 
 
 @app.route('/')
@@ -86,12 +68,7 @@ def predict():
     data=request.form.values()
     punt_removed=remove_punctuation(data)  
     convt_lower=punt_removed.lower()
-    tokenized=tokenize(convt_lower)
-    stop_removed=remove_stopwords(tokenized)
-    lemmatized=lemmatizing(stop_removed)
-    #unlisted=unlist(lemmatized)
-    new_data= tfidf_vectorizer.transform(lemmatized) 
-    output=model.predict(new_data)
+    output=bertmodel.transform(convt_lower)
     return render_template("home.html", prediction = target(output[0]))
 
 
@@ -100,12 +77,7 @@ def predict_app():
     data=request.json['data']
     punt_removed=remove_punctuation(list(data.values())[0])  
     convt_lower=punt_removed.lower()
-    tokenized=tokenize(convt_lower)
-    stop_removed=remove_stopwords(tokenized)
-    lemmatized=lemmatizing(stop_removed)
-    #unlisted=unlist(lemmatized)
-    new_data= tfidf_vectorizer.transform(lemmatized) 
-    output=model.predict(new_data)
+    output=bertmodel.transform(convt_lower)
     return jsonify(target(output[0].tolist()))      
 
 
