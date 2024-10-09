@@ -3,7 +3,7 @@ gunicorn==22.0.0
 pandas==2.2.0rc0
 numpy
 scikit-learn==1.4.0
-bertopic==0.9.0
-openai==0.10.3
-hdbscan==0.8.27
-umap-learn==0.5.2
+bertopic
+openai
+hdbscan
+umap
