@@ -10,14 +10,12 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 string.punctuation
 import safetensors
-import openai
 from bertopic import BERTopic
-from bertopic.representation import OpenAI
 from sklearn.feature_extraction.text import CountVectorizer
+from bertopic.representation import ZeroShotClassification
+from sentence_transformers import SentenceTransformer
 from hdbscan import HDBSCAN
 from umap import UMAP
-import os
-from dotenv import load_dotenv
 
 # process data
 # defining function that contains punctuation removal
@@ -28,34 +26,25 @@ def remove_punctuation(text):
 # Topic Output
 
 def target(data):
-    if data == 0:
-        return "Entertainment"
-    elif data == 1:
-        return "Education"
-    elif data == 2:
-        return "Technology"
-    elif data == 3:
-        return "Business"
-    elif data == 4:
-        return "Sports"
-    else:
-        return "Unknown"
+    categories = {
+        0: "Technology",
+        1: "Sports",
+        2: "Education",
+        3: "Entertainment",
+        4: "Business"
+    }
+    return categories.get(data, "Not in database")
 
-
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
-
+candidate_topics = ['business', 'politics', 'sports', 'health', 'technology', 'entertainment', 'science', 'world', 'economy', 'education']
+representation_model = ZeroShotClassification(candidate_topics, model="facebook/bart-large-mnli")
+embedding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
+vectorizer_model = CountVectorizer(stop_words="english", ngram_range=(1, 1))
 
 # Load the model
 # Flask app
 app=Flask(__name__)
-# Load the model
-client = openai.OpenAI(api_key=api_key)
-vectorizer_model = CountVectorizer(stop_words="english", ngram_range=(1, 1))
-
 # Define the models
-representation_model = OpenAI(client, model="gpt-3.5-turbo", chat=True)
-bertmodel = BERTopic.load("topic_model")
+bertmodel = BERTopic.load("topic_model", embedding_model=embedding_model)
 
 
 @app.route('/')
@@ -65,22 +54,22 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data=request.form.values()
-    punt_removed=remove_punctuation(data)  
-    convt_lower=punt_removed.lower()
+    data = request.form.values()
+    punt_removed = remove_punctuation(data)  
+    convt_lower = punt_removed.lower()
     topics, probs = bertmodel.transform(convt_lower)
-    for topic, prob in enumerate(zip(topics, probs)):
-        return render_template("home.html", prediction = target(topic))
+    new_predictions = pd.DataFrame({"topic_labels": [target(topic) for topic in topics]})
+    return render_template("home.html", prediction = new_predictions['topic_labels'].values[0])
 
 
 @app.route('/predict_api', methods=['POST'])
 def predict_app():
-    data=request.json['data']
-    punt_removed=remove_punctuation(list(data.values())[0])  
-    convt_lower=punt_removed.lower()
+    data = request.json['data']
+    punt_removed = remove_punctuation(list(data.values())[0])  
+    convt_lower = punt_removed.lower()
     topics, probs = bertmodel.transform(convt_lower)
-    for topic, prob in enumerate(zip(topics, probs)):
-        return jsonify(target(topic).tolist())      
+    new_predictions = pd.DataFrame({"topic_labels": [target(topic) for topic in topics]})
+    return jsonify(new_predictions["topic_labels"].tolist())      
 
 
 if __name__ == '__main__':
